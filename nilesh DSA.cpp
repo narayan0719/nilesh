@@ -1,93 +1,178 @@
-#include <iostream>
-	#include <queue>
-	using namespace std;
-	
-	int adj_mat[50][50] = {0, 0};
-	int visited[50] = {0};
-	
-	void dfs(int s, int n, string arr[])
-	{
-	    visited[s] = 1;
-	    cout << arr[s] << " ";
-	    for (int i = 0; i < n; i++)
-	    {
-	        if (adj_mat[s][i] && !visited[i])
-	            dfs(i, n, arr);
-	    }
-	}
-	
-	void bfs(int s, int n, string arr[])
-	{
-	    bool visited[n];
-	    for (int i = 0; i < n; i++)
-	        visited[i] = false;
-	    int v;
-	    queue<int> bfsq;
-	    if (!visited[s])
-	    {
-	        cout << arr[s] << " ";
-	        bfsq.push(s);
-	        visited[s] = true;
-	        while (!bfsq.empty())
-	        {
-	            v = bfsq.front();
-	            for (int i = 0; i < n; i++)
-	            {
-	                if (adj_mat[v][i] && !visited[i])
-	                {
-	                    cout << arr[i] << " ";
-	                    visited[i] = true;
-	                    bfsq.push(i);
-	                }
-	            }
-	            bfsq.pop();
-	        }
-	    }
-	}
-	
-	int main()
-	{
-	    cout << "Enter no. of cities: ";
-	    int n, u;
-	    cin >> n;
-	    string cities[n];
-	    for (int i = 0; i < n; i++)
-	    {
-	        cout << "Enter city #" << i << " (Airport Code): ";
-	        cin >> cities[i];
-	    }
-	    
-	    cout << "\nYour cities are: " << endl;
-	    for (int i = 0; i < n; i++)
-	        cout << "city #" << i << ": " << cities[i] << endl;
-	    for (int i = 0; i < n; i++)
-	    {
-	        for (int j = i + 1; j < n; j++)
-	        {
-	            cout << "Enter distance between " << cities[i] << " and " << cities[j] << " : ";
-	            cin >> adj_mat[i][j];
-	            adj_mat[j][i] = adj_mat[i][j];
-	        }
-	    }
-	    cout << endl;
-	    for (int i = 0; i < n; i++)
-	        cout << "\t" << cities[i] << "\t";
-	    for (int i = 0; i < n; i++)
-	    {
-	        cout << "\n"
-	             << cities[i];
-	        for (int j = 0; j < n; j++)
-	            cout << "\t" << adj_mat[i][j] << "\t";
-	        cout << endl;
-	    }
-	    cout << "Enter Starting Vertex: ";
-	    cin >> u;
-	    cout << "DFS: ";
-	    dfs(u, n, cities);
-	    cout << endl;
-	    cout << "BFS: ";
-	    bfs(u, n, cities);
-	    return 0;
-	}
+#include<iostream>
+#include<stdlib.h>
+#include<string.h>
+using namespace std;
+struct node
+{   string vertex;
+    int time;
+    node *next;
+};   
+class adjmatlist
+{    int m[10][10],n,i,j; 
+     char ch;  
+	 string v[20];   
+	 node *head[20];  
+	 node *temp=NULL;
 
+     public:
+     adjmatlist()
+     {      for(i=0;i<20;i++)
+            {    head[i]=NULL;  }
+     }          
+     void getgraph();
+     void adjlist();
+ 
+     void displaym();
+     void displaya();
+};
+void adjmatlist::getgraph()
+{
+   cout<<"\n enter no. of cities(max. 20) :- ";
+   cin>>n;
+   cout<<"\n enter name of cities :- "<<"\n";
+   for(i=0;i<n;i++)
+     cin>>v[i];         
+   for(i=0;i<n;i++)
+   { 
+      for(j=0;j<n;j++)
+      {  cout<<"\n if path is present between city "<<v[i]<<" and "<<v[j]<<" then press enter y otherwise n:- "; 
+         cin>>ch;
+         if(ch=='y')
+         { 
+           cout<<"\n enter time required to reach city "<<v[j]<<" from "<<v[i]<<" in minutes :- ";
+           cin>>m[i][j];
+         }
+         else if(ch=='n')
+         {  m[i][j]=0;  }
+         else
+         { cout<<"\n unknown entry";  }
+      }
+   }       
+      adjlist();
+        
+}
+void adjmatlist::adjlist()
+{      cout<<"\n\n ****";
+       for(i=0;i<n;i++)
+       {  node *p=new(struct node);
+          p->next=NULL;
+          p->vertex=v[i];   
+          head[i]=p;      
+		  cout<<"\n"<<head[i]->vertex;
+       }
+     
+       for(i=0;i<n;i++)
+       {  for(j=0;j<n;j++)
+          {
+                   if(m[i][j]!=0)
+                   {      
+                         node *p=new(struct node);
+                         p->vertex=v[j];
+                         p->time=m[i][j];
+                         p->next=NULL;
+                         if(head[i]->next==NULL)
+                         {  head[i]->next=p;   }
+                         else
+                         {  temp=head[i];
+                         while(temp->next!=NULL)
+                         {   temp=temp->next;  }
+                             temp->next=p;
+                         }
 
+                   }
+
+          }
+       }  
+     
+}
+void adjmatlist::displaym()
+{    cout<<"\n";
+     for(j=0;j<n;j++)
+     {  cout<<"\t\t"<<v[j];  }
+
+     for(i=0;i<n;i++)
+     {  cout<<"\n "<<v[i];
+        for(j=0;j<n;j++)
+        {   cout<<"\t\t"<<m[i][j];
+        }
+            cout<<"\n";
+     }
+}   
+void adjmatlist::displaya()
+{     
+       cout<<"\n adjacency list is:- \n";
+     
+       for(i=0;i<n;i++)
+       { 
+                 
+             
+                         if(head[i]==NULL)
+                         {   cout<<"\n adjacency list not present";  break;   }
+                         else
+                         { 
+                            cout<<"\n"<<head[i]->vertex;
+                         temp=head[i]->next;
+                         while(temp!=NULL)
+                         {  cout<<"-> "<<temp->vertex;
+                            temp=temp->next;  }
+                            
+                         }
+
+                  
+
+         
+       }
+     
+         cout<<"\n\n path and time required to reach cities is";
+       
+       for(i=0;i<n;i++)
+       { 
+                 
+             
+                         if(head[i]==NULL)
+                         {   cout<<"\n adjacency list not present";  break;   }
+                         else
+                         { 
+                           
+                         temp=head[i]->next;
+                         while(temp!=NULL)
+                         {  cout<<"\n"<<head[i]->vertex;
+                            cout<<"-> "<<temp->vertex<<"\n\t   [time required: "<<temp->time<<" min ]";
+                            temp=temp->next;  }
+                            
+                         }
+
+                  
+
+         
+       }
+}
+int main()
+{  int m;   
+   adjmatlist a;
+
+   while(1)
+   {
+   cout<<"\n\n **** flight paths between cities *******";
+   cout<<"\n 1.enter graph";
+   cout<<"\n 2.display adjacency matrix for cities";
+   cout<<"\n 3.display adjacency list for cities";
+   cout<<"\n 4.exit";
+   cout<<"\n\n enter the choice.......";
+   cin>>m;
+  
+        switch(m)
+       {              case 1: a.getgraph();
+                                    break;
+                     case 2: a.displaym();
+                                   break;
+                          
+                           case 3: a.displaya();
+                                   break;
+                            case 4: exit(0);
+                
+                            default:  cout<<"\n unknown choice";
+         }
+    }
+    return 0;
+}                    
